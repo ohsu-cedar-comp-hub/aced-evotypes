@@ -1,0 +1,3 @@
+[submodule "WGS-nextflow-workflow"]
+	path = WGS-nextflow-workflow
+	url = https://github.com/ohsu-cedar-comp-hub/WGS-nextflow-workflow.git
