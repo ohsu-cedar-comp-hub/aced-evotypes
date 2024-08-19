@@ -1,37 +1,40 @@
 #!/bin/bash
+
 #SBATCH -p exacloud
 #SBATCH -c 32
 #SBATCH --mem-per-cpu=4GB
-#SBATCH --time=36:00:00
+#SBATCH -N 1
+#SBATCH --qos=very_long_jobs
+#SBATCH --time=11-0
 
 # Load module
 module load /etc/modulefiles/singularity/current
+# Setting CGPWGS version
+export CGPWGS_VER=2.1.0 #SET ME
 #singularity pull docker://quay.io/wtsicgp/dockstore-cgpwgs:$CGPWGS_VER
 
-export CGPWGS_VER=2.1.0 #SET ME
-
 # cgpwgs singularity
-CGPWGS=''
+SIF='/path/to/directory/that/contains/singularity/image'
 # Path to reference directory
-REF=''
-# Path to input data (tumor and normal BAMs)
-DATA=''
+REF='/path/to/reference/directory'
+# Path to input data directory (tumor and normal BAMs)
+DATA='/path/to/input/BAMs'
 # Path to output directory
-OUTPUT=''
-
+RESULTS='/path/to/output/directory'
 
 #DOWNLOADED REF FILES FROM: https://ftp.sanger.ac.uk/pub/cancer/dockstore/human/GRCh38_hla_decoy_ebv/
 
-# main job
+# run ds-cgpwgs.pl
 /usr/bin/time -v singularity exec \
  --cleanenv \
- --workdir $OUTPUT \
- --home $OUTPUT:/home  \
+ --workdir $RESULTS \
+ --home $RESULTS:/home  \
  --bind $REF:/var/spool/ref:ro  \
  --bind $DATA:/var/spool/data:ro  \
- --bind $OUTPUT:/var/spool/test_results  \
- $CGPWGS/dockstore-cgpwgs_${CGPWGS_VER}.sif \
+ --bind $RESULTS:/var/spool/results  \
+ $SIF/dockstore-cgpwgs_${CGPWGS_VER}.sif \
   ds-cgpwgs.pl \
+-c 32 \
 -r /var/spool/ref/core_ref_GRCh38_hla_decoy_ebv.tar.gz \
 -a /var/spool/ref/VAGrENT_ref_GRCh38_hla_decoy_ebv_ensembl_91.tar.gz \
 -si /var/spool/ref/SNV_INDEL_ref_GRCh38_hla_decoy_ebv-fragment.tar.gz \
