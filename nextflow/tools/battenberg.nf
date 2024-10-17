@@ -1,9 +1,8 @@
 #!/usr/bin/env nextflow
 
 process AlleleCounter {
-    // module load R/4.3.1 //make env with R and required packages
-    // module load tools/env/proxy
-    container "${params.container_R}"
+    // load R env with required packages
+    container "${params.container_ac_r}"
     publishDir "${params.bucket}/${params.sample_id}/battenberg", mode:'copy'
 
     input:
@@ -11,21 +10,21 @@ process AlleleCounter {
     path tumor_bam
 
     output:
-    path "alleleCount_info.txt"
+    path "allele_counting/*"
 
     script:
     """
-    # get work dir directory for counting:
-    workdir="$countDir/AC_${tumour_normal_id}/"
-    mkdir -p ${workdir}
+    workdir=\${pwd}
+    mkdir \${workdir}/allele_counting
 
+    # execute alleleCounting
     R CMD BATCH "--no-restore-data --no-save --args \
     -t ${tumour_id} \
     -n ${normal_id} \
-    --nb ${normal_bam_file} \
-    --tb ${tumour_bam_file} \
-    --cpu ${cpu} \
-    -o ${workdir} " \
-    runAC_forBattenberg.R "${workdir}/alleleCount_info.txt"    
+    --nb ${normal_bam} \
+    --tb ${tumour_bam} \
+    --cpu 16 \
+    -o \${workdir}/allele_counting "
+    runAC_forBattenberg.R "\${workdir}/allele_counting/alleleCount_info.txt"    
     """
 }
