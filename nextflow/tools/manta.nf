@@ -4,57 +4,62 @@
 // Step 1
 process ConfigManta {
     container "${params.container_strelka_manta}"
-    publishDir "${params.bucket}/${params.sample_id}/manta", mode:'copy'
+    publishDir "${params.bucket}/${params.sample_id}", mode:'copy'
 
     input: 
     path normal_bam
+    path normal_bai
     path tumor_bam
+    path tumor_bai
     // Reference File
-    path genome
+    path core_ref
 
     output:
-    path "manta_results", emit: manta_results //this is a directory
+    path "manta/*"
+    path "manta", emit: manta
 
     script:
     """
     workdir=\$(pwd)
+    mkdir \${workdir}/manta
 
     configManta.py \
     --normalBam ${normal_bam} \
     --tumorBam ${tumor_bam} \
-    --referenceFASTA ${genome} \
-    --runDir \${workdir}/manta_results
+    --referenceFasta ${core_ref}/genome.fa \
+    --runDir \${workdir}/manta
     """
 }
 
 // Step 2
 process MantaRunWorkflow {
     container "${params.container_strelka_manta}"
-    publishDir "${params.bucket}/${params.sample_id}/manta", mode:'copy'
-
+    publishDir "${params.bucket}/${params.sample_id}", mode:'copy'
 
     input:
-    path manta_results
+    path manta
 
     output:
-    path "results", emit: results // results contains 3 directories (evidence, stats and variants)
+    path "${manta}/results/*"
+    path "${manta}/results/variants/somaticSV.vcf.gz", emit: somaticSV
+
 
     script:
     """
-    ${manta_results}/runWorkflow.py -j $CPUS
+    ${manta}/runWorkflow.py -j $CPUS
     """
 }
 
 // SV quality filtering
 process MantaQualityFilter {
     container "${params.container_bcftools}"
-    publishDir "${params.bucket}/${params.sample_id}/manta", mode:'copy'
+    publishDir "${params.bucket}/${params.sample_id}/manta/filtered", mode:'copy'
 
     input: 
-    path results
+    path somaticSV
 
     output:
-    MANTAPASS_${t_n}.vcf
+    path "MANTAPASS_${t_n}.vcf"
 
     script:
     """
@@ -62,8 +67,8 @@ process MantaQualityFilter {
 
     bcftools filter \
     -O v  \
-    -o \${workdir}/MANTAPASS_${t_n}.vcf \
+    -o \$workdir/MANTAPASS_${t_n}.vcf \
     -i "FILTER == 'PASS'" \
-    "${results}/variants/somaticSV.vcf.gz"
+    "${somaticSV}"
     """
 }

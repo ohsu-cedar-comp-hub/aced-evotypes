@@ -2,55 +2,57 @@
 
 // Step 1
 process GRIDSS {
-    container "${container_gridss}"
+    container "${params.container_gridss}"
     publishDir "${params.bucket}/${params.sample_id}/gridss", mode:'copy'
-
 
     input:
     path normal_bam
     path tumor_bam
-    // Reference Files
+    // Reference File
     path genome
 
     output:
-    path "${seq_id_t}_v_${seq_id_n}.gridss.vcf", emit: vcf
+    path "${t_n}.gridss.vcf", emit: vcf
     path "${t_n}.gridss.assembly"
 
     script:
     """
-    java -jar $GRIDSS_JAR gridss \
-    -r ${genome} \
-    -o ${seq_id_t}_v_${seq_id_n}.gridss.vcf \
-    -a ${t_n}.gridss.assembly \
+    workdir=\${pwd}
+
+    gridss \
+    --jvmheap "15g" \
+    --workingdir \${workdir} \
+    --reference ${genome} \
+    --assembly \${workdir}/${t_n}.gridss.assembly \
+    --output \${workdir}/${t_n}.gridss.vcf \
     ${normal_bam} ${tumor_bam}
     """
 }
 
 process GridssSomaticFilter {
-    container "${container_gridss}"
-    publishDir "${params.bucket}/${params.sample_id}/gridss", mode:'copy'
-
+    container "${params.container_gridss_r}"
+    publishDir "${params.bucket}/${params.sample_id}/gridss/filtered", mode:'copy'
 
     input:
     path vcf
-    // Reference file
-    path BSgenome
+    path gridss_dir
+    path pondir
 
     output:
-    path "${seq_id_t}_v_${seq_id_n}.gridss.filtered.vcf"
-    path "${seq_id_t}_v_${seq_id_n}.gridss.semifiltered.vcf"
+    path "${t_n}.gridss.filtered.vcf"
+    path "${t_n}.gridss.semifiltered.vcf"
 
     script:
     """
-    {rscript} /script/dir/gridss_somatic_filter \
-    --pondir gridss-2.13.2 \
-    --ref ${BSgenome}/BSgenome.Hsapiens.UCSC.hg38 \
+    {rscript} ${gridss_dir}/gridss_somatic_filter \
+    --pondir ${pondir} \
+    --ref BSgenome.Hsapiens.UCSC.hg38 \
     --input ${vcf} \
-    --output ${seq_id_t}_v_${seq_id_n}.gridss.filtered.vcf \
-    --fulloutput ${seq_id_t}_v_${seq_id_n}.gridss.semifiltered.vcf \
+    --output ${t_n}.gridss.filtered.vcf \
+    --fulloutput ${t_n}.gridss.semifiltered.vcf \
     --normalordinal 1 \
     --tumourordinal 2 \
-    --s "/script/dir/gridss_trial_17_5" \
+    --s ${gridss_dir} \
     --gc
     """
 }

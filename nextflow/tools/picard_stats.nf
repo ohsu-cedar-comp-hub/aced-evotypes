@@ -4,14 +4,14 @@
 process AlignmentMetrics {
     // process doesn't stop on an error condition, it just reports a message notifying you of the error event
     errorStrategy 'ignore'
-    publishDir "/home/groups/EllrottLab/evotypes/nextflow/tools/${params.sample_id}/bam/alignment_metrics", mode: 'copy'
+    publishDir "${params.bucket}/${params.sample_id}/bam/alignment_metrics", mode: 'copy'
 
     input:
     path bam
     path genome
 
     output: 
-    path "*alignment_metrics.output"
+    path "*alignment_metrics.txt"
 
     script:
     """
@@ -41,14 +41,16 @@ process WgsMetrics {
     publishDir "${params.bucket}/${params.sample_id}/bam/alignment_metrics", mode:'copy'
 
     input:
-    val bam
+    path bam
     path genome
 
     output: 
-    path "*coverage_metrics.output"
+    path "*coverage_metrics.txt"
 
     script:
     """
+    basename=\$(basename ${bam} .bam)
+
     java -jar ${params.container_picard} CollectWgsMetrics \
     INPUT="${bam}" \
     OUTPUT="\${basename}_coverage_metrics.txt" \
@@ -74,13 +76,17 @@ process InsertMetrics {
     publishDir "${params.bucket}/${params.sample_id}/bam/alignment_metrics", mode:'copy'
 
     input:
-    val bam
+    path bam
 
     output: 
-    path "*insert_metrics.output"
+    path "*insert_metrics.pdf"
+    path "*insert_metrics.txt"
+
 
     script:
     """
+    basename=\$(basename ${bam} .bam)
+    
     java -jar ${params.container_picard} CollectInsertSizeMetrics \
     HISTOGRAM_FILE="\${basename}_insert_metrics.pdf" \
     INPUT="${bam}" \

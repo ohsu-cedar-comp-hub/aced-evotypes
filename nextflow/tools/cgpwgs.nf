@@ -7,8 +7,11 @@ process CGPWGS {
     input: 
     path normal_bam
     path normal_bai
+    path normal_bas
     path tumor_bam
     path tumor_bai
+    path tumor_bas
+
     // Reference Files
     path core_zip
     path vagrent_zip
@@ -17,11 +20,12 @@ process CGPWGS {
     path qc_zip
 
     output:
-    path "*.result.tar.gz" // includes ascat/* ; brass/* ; caveman/* ; genotyped/* ; pindel/*
+    path "cgpwgs_results/*" // includes all ouput files and directories
 
     script:
     """
     workdir=\$(pwd)
+    mkdir \${workdir}/cgpwgs_results
 
     ds-cgpwgs.pl \
     -c 32 \
@@ -35,6 +39,6 @@ process CGPWGS {
     -tidx ${tumor_bai} \
     -n ${normal_bam} \
     -nidx ${normal_bai} \
-    -o \${workdir}
+    -o \${workdir}/cgpwgs_results
     """
 }

@@ -5,26 +5,29 @@ process DellyCall {
     container "${params.container_delly}"
     publishDir "${params.bucket}/${params.sample_id}/delly", mode:'copy'
 
-
     input: 
     path normal_bam
+    path normal_bai
     path tumor_bam
+    path tumor_bai
     // Reference Files
     path genome
+    path hg38_excl
 
     output:
-    path "delly_${t_n}.bcf", emit: bcf
+    path "*.bcf", emit: bcf
 
     script:
     """
     delly call \
-    -g $genome \
+    -g ${genome} \
     -o delly_${t_n}.bcf \
     -x ${hg38_excl} \
     ${tumor_bam} \
     ${normal_bam}
     """
 }
+
 // file has both germline and somatic and must be filtered
 // first need to make a table with the headers from the vcf file for the tumor and control
 process DellyTable {
@@ -39,7 +42,7 @@ process DellyTable {
 
     script:
     """
-    bcftools view $bcf | grep '^#CHROM' | awk -F '\t' '{print $10 "\ttumor\n"$11"\tcontrol"}' > samples.txt 
+    bcftools view ${bcf} | grep '^#CHROM' | awk -F '\t' '{print $10 "\ttumor\n"$11"\tcontrol"}' > samples.txt 
     """
 }
 
@@ -59,9 +62,9 @@ process DellyFilter {
     """
     delly filter \
     -f somatic \
-    -s $samples \
+    -s ${samples} \
     -o Bdelly_${t_n}.bcf \
-    $bcf
+    ${bcf}
     """
 }
 
@@ -74,7 +77,7 @@ process DellyQualityFilter {
     path Bdelly
 
     output:
-    path "${workplace}/dellyPASS_${t_n}.vcf", emit: dellyPass 
+    path "dellyPASS_${t_n}.vcf"
 
     script:
     """
@@ -82,6 +85,6 @@ process DellyQualityFilter {
     -O v \
     -o dellyPASS_${t_n}.vcf \
     -i "FILTER == 'PASS'" \
-    $Bdelly
+    ${Bdelly}
     """
 }
