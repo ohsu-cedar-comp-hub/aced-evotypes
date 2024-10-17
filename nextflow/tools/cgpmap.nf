@@ -12,8 +12,8 @@ process CGPMAP {
     path bwa_zip
 
     output:
-    path "*realign.OHSU.bam*"
-    path "*realign.OHSU.bam", emit: bam 
+    path "bam*"
+    path "*.bam", emit: bam 
     path "*flagstat.txt"
 
     script:
@@ -23,14 +23,17 @@ process CGPMAP {
     ds-cgpmap.pl \
     -r ${core_zip} \
     -i ${bwa_zip} \
-    -s ${basename}.realign.OHSU \
+    -s ${basename} \
     -o \${workdir} \
     -t 6 \
     -bwakit \
     -bm2 \
     ${cram}
 
+    echo "Generating stats for input cram: ${cram}"
     samtools flagstat ${cram} > ${basename}.flagstat.txt
-    samtools flagstat ${basename}.realign.OHSU > ${basename}.realign.OHSU.flagstat.txt
+
+    echo "Generating stats for realigned bam: ${basename}.bam"
+    samtools flagstat ${basename}.bam > ${basename}.realign.flagstat.txt
     """
 }
