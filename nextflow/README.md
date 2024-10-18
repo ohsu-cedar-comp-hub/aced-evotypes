@@ -41,7 +41,7 @@ All of the reference files used in the alignment and variant workflows are provi
 
 ## Note
 
-Reference files can also be downloaded here: https://ftp.sanger.ac.uk/pub/cancer/dockstore/human/GRCh38_hla_decoy_ebv/
+Reference files can be downloaded here: https://ftp.sanger.ac.uk/pub/cancer/dockstore/human/GRCh38_hla_decoy_ebv/
 
 # Containers
 
