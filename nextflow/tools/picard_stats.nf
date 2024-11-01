@@ -4,7 +4,7 @@
 process AlignmentMetrics {
     // process doesn't stop on an error condition, it just reports a message notifying you of the error event
     errorStrategy 'ignore'
-    publishDir "${params.bucket}/${params.sample_id}/bam/alignment_metrics", mode: 'copy'
+    publishDir "${params.bucket}/${params.case_id}/bam/alignment_metrics", mode: 'copy'
 
     input:
     path bam
@@ -38,7 +38,7 @@ process AlignmentMetrics {
 //collect WGS metrics
 process WgsMetrics {
     errorStrategy 'ignore'
-    publishDir "${params.bucket}/${params.sample_id}/bam/alignment_metrics", mode:'copy'
+    publishDir "${params.bucket}/${params.case_id}/bam/alignment_metrics", mode:'copy'
 
     input:
     path bam
@@ -73,21 +73,23 @@ process WgsMetrics {
 //collect insert size metrics
 process InsertMetrics {
     errorStrategy 'ignore'
-    publishDir "${params.bucket}/${params.sample_id}/bam/alignment_metrics", mode:'copy'
+    publishDir "${params.bucket}/${params.case_id}/bam/alignment_metrics", mode:'copy'
 
     input:
     path bam
 
-    output: 
+    output:
     path "*insert_metrics.pdf"
     path "*insert_metrics.txt"
 
-
     script:
     """
+    source ~/miniconda3/etc/profile.d/conda.sh
+    conda activate picard
+
     basename=\$(basename ${bam} .bam)
-    
-    java -jar ${params.container_picard} CollectInsertSizeMetrics \
+
+    picard CollectInsertSizeMetrics \
     HISTOGRAM_FILE="\${basename}_insert_metrics.pdf" \
     INPUT="${bam}" \
     OUTPUT="\${basename}_insert_metrics.txt" \
