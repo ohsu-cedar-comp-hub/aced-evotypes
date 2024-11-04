@@ -42,7 +42,13 @@ process CGPMAP {
     echo ""
 
     mv \$workdir/\${SM}.bam \$workdir/${basename}.bam
-    echo "Listing files in workdir after renaming output bam"
+    mv \$workdir/\${SM}.bam.bai \$workdir/${basename}.bam.bai
+    mv \$workdir/\${SM}.bam.bas \$workdir/${basename}.bam.bas
+    mv \$workdir/\${SM}.bam.maptime \$workdir/${basename}.bam.maptime
+    mv \$workdir/\${SM}.bam.md5 \$workdir/${basename}.bam.md5
+    mv \$workdir/\${SM}.bam.met \$workdir/${basename}.bam.met
+
+    echo "Listing files in workdir after renaming output"
     ls \${workdir}
     echo ""
 
