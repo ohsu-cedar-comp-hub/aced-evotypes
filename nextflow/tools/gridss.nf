@@ -2,57 +2,72 @@
 
 // Step 1
 process GRIDSS {
+    errorStrategy 'ignore'
     container "${params.container_gridss}"
-    publishDir "${params.bucket}/${params.sample_id}/gridss", mode:'copy'
+    publishDir "${params.bucket}/${params.case_id}/gridss", mode:'copy'
 
     input:
-    path normal_bam
-    path tumor_bam
+    path files
+    val normal_file
+    val normal_SM
+    val tumor_file
+    val tumor_SM
     // Reference File
-    path genome
+    path core_ref
 
     output:
-    path "${t_n}.gridss.vcf", emit: vcf
-    path "${t_n}.gridss.assembly"
+    path "${tumor_SM}_${normal_SM}.gridss.vcf", emit: vcf
+    path "${tumor_SM}_${normal_SM}.gridss.assembly"
 
     script:
     """
-    workdir=\${pwd}
+    workdir=\$(pwd)
+    
+    echo "listing workdir: \${workdir}"
+    ls \$workdir
+    echo ""
 
+    echo "listing items in files: ${files}"
+    ls ${files}
+    
     gridss \
     --jvmheap "15g" \
     --workingdir \${workdir} \
-    --reference ${genome} \
-    --assembly \${workdir}/${t_n}.gridss.assembly \
-    --output \${workdir}/${t_n}.gridss.vcf \
-    ${normal_bam} ${tumor_bam}
+    --reference ${core_ref}/genome.fa \
+    --assembly \${workdir}/${tumor_SM}_${normal_SM}.gridss.assembly \
+    --output \${workdir}/${tumor_SM}_${normal_SM}.gridss.vcf \
+    -t 8 \
+    ${files}/${normal_file} ${files}/${tumor_file}
     """
 }
 
 process GridssSomaticFilter {
+    errorStrategy 'ignore'
     container "${params.container_gridss_r}"
-    publishDir "${params.bucket}/${params.sample_id}/gridss/filtered", mode:'copy'
+    publishDir "${params.bucket}/${params.case_id}/gridss/filtered", mode:'copy'
 
     input:
     path vcf
     path gridss_dir
     path pondir
+    val normal_SM
+    val tumor_SM
 
     output:
-    path "${t_n}.gridss.filtered.vcf"
-    path "${t_n}.gridss.semifiltered.vcf"
+    path "${tumor_SM}_${normal_SM}.gridss.filtered.vcf"
+    path "${tumor_SM}_${normal_SM}.gridss.semifiltered.vcf"
 
     script:
     """
-    {rscript} ${gridss_dir}/gridss_somatic_filter \
+    Rscript ${gridss_dir}/gridss_somatic_filter \
+    --input ${vcf} \
     --pondir ${pondir} \
     --ref BSgenome.Hsapiens.UCSC.hg38 \
-    --input ${vcf} \
-    --output ${t_n}.gridss.filtered.vcf \
-    --fulloutput ${t_n}.gridss.semifiltered.vcf \
+    --output ${tumor_SM}_${normal_SM}.gridss.filtered.vcf \
+    --fulloutput ${tumor_SM}_${normal_SM}.gridss.semifiltered.vcf \
     --normalordinal 1 \
     --tumourordinal 2 \
-    --s ${gridss_dir} \
+    -s ${gridss_dir} \
     --gc
     """
 }
