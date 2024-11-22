@@ -3,14 +3,14 @@
 // run Strelka
 // Step 1
 process ConfigStrelka {
+    errorStrategy 'ignore'
     container "${params.container_strelka_manta}"
-    publishDir "${params.bucket}/${params.sample_id}", mode:'copy'
+    publishDir "${params.bucket}/${params.case_id}", mode:'copy'
 
     input:
-    path normal_bam
-    path normal_bai
-    path tumor_bam
-    path tumor_bai
+    path files
+    val normal_file
+    val tumor_file
     // Reference File
     path core_ref
 
@@ -21,11 +21,18 @@ process ConfigStrelka {
     script:
     """
     workdir=\$(pwd)
-    mkdir \${workdir}/strelka
+    mkdir -p \${workdir}/strelka
+
+    echo "listing workdir: \${workdir}"
+    ls \$workdir
+    echo ""
+
+    echo "listing items in files: ${files}"
+    ls ${files}
 
     configureStrelkaSomaticWorkflow.py \
-    --normalBam ${normal_bam} \
-    --tumorBam ${tumor_bam} \
+    --normalBam ${files}/${normal_file} \
+    --tumorBam ${files}/${tumor_file} \
     --outputCallableRegions \
     --referenceFasta ${core_ref}/genome.fa \
     --runDir \${workdir}/strelka
@@ -34,33 +41,40 @@ process ConfigStrelka {
 
 // Step 2 
 process StrelkaRunWorkflow {
+    errorStrategy 'ignore'
     container "${params.container_strelka_manta}"
-    publishDir "${params.bucket}/${params.sample_id}", mode:'copy'
+    publishDir "${params.bucket}/${params.case_id}", mode:'copy'
 
     input: 
+    path files
     path strelka
+    // Reference file
+    path core_ref
 
     output:
-    path "${strelka}/results/*"
+    path "strelka/*"
     path "${strelka}/results/variants/somatic.indels.vcf.gz", emit: somatic_indels
     path "${strelka}/results/variants/somatic.snvs.vcf.gz", emit: somatic_snvs
 
     script:
     """
-    ${strelka}/runWorkflow.py -m local -j $CPUS
+    ${strelka}/runWorkflow.py -m local -j 8
     """
 }
 
 // INDEL quality filtering
 process StrelkaIndelFilter {
+    errorStrategy 'ignore'
     container "${params.container_bcftools}"
-    publishDir "${params.bucket}/${params.sample_id}/strelka/filtered", mode:'copy'
+    publishDir "${params.bucket}/${params.case_id}/strelka/filtered", mode:'copy'
 
     input:
     path somatic_indels
+    val normal_SM
+    val tumor_SM
 
     output:
-    path "STRELKAPASS_somatic.indels_*"
+    path "STRELKAPASS_somatic.indels_${tumor_SM}_${normal_SM}.vcf"
 
     script:
     """
@@ -68,7 +82,7 @@ process StrelkaIndelFilter {
 
     bcftools filter \
     -O v  \
-    -o \${workdir}/STRELKAPASS_somatic.indels_${t_n}.vcf \
+    -o \${workdir}/STRELKAPASS_somatic.indels_${tumor_SM}_${normal_SM}.vcf \
     -i "FILTER == 'PASS'" \
     "${somatic_indels}"
     """
@@ -76,14 +90,17 @@ process StrelkaIndelFilter {
 
 // SNV quality filtering
 process StrelkaSnvFilter {
+    errorStrategy 'ignore'
     container "${params.container_bcftools}"
-    publishDir "${params.bucket}/${params.sample_id}/strelka/filtered", mode:'copy'
+    publishDir "${params.bucket}/${params.case_id}/strelka/filtered", mode:'copy'
 
     input:
     path somatic_snvs
+    val normal_SM
+    val tumor_SM
 
     output:
-    path "STRELKAPASS_somatic.snvs_*"
+    path "STRELKAPASS_somatic.snvs_${tumor_SM}_${normal_SM}.vcf"
 
     script:
     """
@@ -91,7 +108,7 @@ process StrelkaSnvFilter {
 
     bcftools filter \
     -O v  \
-    -o \${workdir}/STRELKAPASS_somatic.snvs_${t_n}.vcf \
+    -o \${workdir}/STRELKAPASS_somatic.snvs_${tumor_SM}_${normal_SM}.vcf \
     -i "FILTER == 'PASS'" \
     "${somatic_snvs}"
     """
