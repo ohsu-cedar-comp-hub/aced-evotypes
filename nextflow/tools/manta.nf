@@ -3,14 +3,14 @@
 // run Manta
 // Step 1
 process ConfigManta {
+    errorStrategy 'ignore'
     container "${params.container_strelka_manta}"
-    publishDir "${params.bucket}/${params.sample_id}", mode:'copy'
+    publishDir "${params.bucket}/${params.case_id}", mode:'copy'
 
     input: 
-    path normal_bam
-    path normal_bai
-    path tumor_bam
-    path tumor_bai
+    path files
+    val normal_file
+    val tumor_file
     // Reference File
     path core_ref
 
@@ -21,45 +21,58 @@ process ConfigManta {
     script:
     """
     workdir=\$(pwd)
-    mkdir \${workdir}/manta
+    mkdir -p \${workdir}/manta
+
+    echo "listing workdir: \${workdir}"
+    ls \$workdir
+    echo ""
+
+    echo "listing items in files: ${files}"
+    ls ${files}
 
     configManta.py \
-    --normalBam ${normal_bam} \
-    --tumorBam ${tumor_bam} \
+    --normalBam ${files}/${normal_file} \
+    --tumorBam ${files}/${tumor_file} \
     --referenceFasta ${core_ref}/genome.fa \
     --runDir \${workdir}/manta
     """
 }
-
+    
 // Step 2
 process MantaRunWorkflow {
+    errorStrategy 'ignore'
     container "${params.container_strelka_manta}"
-    publishDir "${params.bucket}/${params.sample_id}", mode:'copy'
+    publishDir "${params.bucket}/${params.case_id}", mode:'copy'
 
     input:
+    path files
     path manta
+    // Reference File
+    path core_ref
 
     output:
-    path "${manta}/results/*"
+    path "manta/*"
     path "${manta}/results/variants/somaticSV.vcf.gz", emit: somaticSV
-
 
     script:
     """
-    ${manta}/runWorkflow.py -j $CPUS
+    ${manta}/runWorkflow.py -j 8
     """
 }
 
 // SV quality filtering
 process MantaQualityFilter {
+    errorStrategy 'ignore'
     container "${params.container_bcftools}"
-    publishDir "${params.bucket}/${params.sample_id}/manta/filtered", mode:'copy'
+    publishDir "${params.bucket}/${params.case_id}/manta/filtered", mode:'copy'
 
     input: 
     path somaticSV
+    val normal_SM
+    val tumor_SM
 
     output:
-    path "MANTAPASS_${t_n}.vcf"
+    path "MANTAPASS_${tumor_SM}_${normal_SM}.vcf"
 
     script:
     """
@@ -67,7 +80,7 @@ process MantaQualityFilter {
 
     bcftools filter \
     -O v  \
-    -o \$workdir/MANTAPASS_${t_n}.vcf \
+    -o \$workdir/MANTAPASS_${tumor_SM}_${normal_SM}.vcf \
     -i "FILTER == 'PASS'" \
     "${somaticSV}"
     """
