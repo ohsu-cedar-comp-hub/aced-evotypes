@@ -20,6 +20,14 @@ process ConfigStrelka {
 
     script:
     """
+    echo "NEXTFLOW PIPELINE VERSION"
+    echo "****************************"
+    echo "params.release: ${params.release}"
+    echo "params.releasedate: ${params.releasedate}"
+    echo "params.githublink: ${params.githublink}"
+    echo "****************************"
+    echo ""
+
     workdir=\$(pwd)
     mkdir -p \${workdir}/strelka
 
@@ -58,6 +66,14 @@ process StrelkaRunWorkflow {
 
     script:
     """
+    echo "NEXTFLOW PIPELINE VERSION"
+    echo "****************************"
+    echo "params.release: ${params.release}"
+    echo "params.releasedate: ${params.releasedate}"
+    echo "params.githublink: ${params.githublink}"
+    echo "****************************"
+    echo ""
+
     ${strelka}/runWorkflow.py -m local -j 8
     """
 }
@@ -78,6 +94,14 @@ process StrelkaIndelFilter {
 
     script:
     """
+    echo "NEXTFLOW PIPELINE VERSION"
+    echo "****************************"
+    echo "params.release: ${params.release}"
+    echo "params.releasedate: ${params.releasedate}"
+    echo "params.githublink: ${params.githublink}"
+    echo "****************************"
+    echo ""
+
     workdir=\$(pwd)
 
     bcftools filter \
@@ -104,6 +128,14 @@ process StrelkaSnvFilter {
 
     script:
     """
+    echo "NEXTFLOW PIPELINE VERSION"
+    echo "****************************"
+    echo "params.release: ${params.release}"
+    echo "params.releasedate: ${params.releasedate}"
+    echo "params.githublink: ${params.githublink}"
+    echo "****************************"
+    echo ""
+
     workdir=\$(pwd)
 
     bcftools filter \

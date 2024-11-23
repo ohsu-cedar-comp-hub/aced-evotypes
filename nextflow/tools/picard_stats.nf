@@ -15,6 +15,14 @@ process AlignmentMetrics {
 
     script:
     """
+    echo "NEXTFLOW PIPELINE VERSION"
+    echo "****************************"
+    echo "params.release: ${params.release}"
+    echo "params.releasedate: ${params.releasedate}"
+    echo "params.githublink: ${params.githublink}"
+    echo "****************************"
+    echo ""
+
     basename=\$(basename ${bam} .bam)
 
     java -jar ${params.container_picard} CollectAlignmentSummaryMetrics \
@@ -49,6 +57,14 @@ process WgsMetrics {
 
     script:
     """
+    echo "NEXTFLOW PIPELINE VERSION"
+    echo "****************************"
+    echo "params.release: ${params.release}"
+    echo "params.releasedate: ${params.releasedate}"
+    echo "params.githublink: ${params.githublink}"
+    echo "****************************"
+    echo ""
+
     basename=\$(basename ${bam} .bam)
 
     java -jar ${params.container_picard} CollectWgsMetrics \
@@ -86,6 +102,14 @@ process InsertMetrics {
     """
     source ~/miniconda3/etc/profile.d/conda.sh
     conda activate picard
+
+    echo "NEXTFLOW PIPELINE VERSION"
+    echo "****************************"
+    echo "params.release: ${params.release}"
+    echo "params.releasedate: ${params.releasedate}"
+    echo "params.githublink: ${params.githublink}"
+    echo "****************************"
+    echo ""
 
     basename=\$(basename ${bam} .bam)
 

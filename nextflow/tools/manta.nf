@@ -20,6 +20,14 @@ process ConfigManta {
 
     script:
     """
+    echo "NEXTFLOW PIPELINE VERSION"
+    echo "****************************"
+    echo "params.release: ${params.release}"
+    echo "params.releasedate: ${params.releasedate}"
+    echo "params.githublink: ${params.githublink}"
+    echo "****************************"
+    echo ""
+
     workdir=\$(pwd)
     mkdir -p \${workdir}/manta
 
@@ -56,6 +64,14 @@ process MantaRunWorkflow {
 
     script:
     """
+    echo "NEXTFLOW PIPELINE VERSION"
+    echo "****************************"
+    echo "params.release: ${params.release}"
+    echo "params.releasedate: ${params.releasedate}"
+    echo "params.githublink: ${params.githublink}"
+    echo "****************************"
+    echo ""
+
     ${manta}/runWorkflow.py -j 8
     """
 }
@@ -76,6 +92,14 @@ process MantaQualityFilter {
 
     script:
     """
+    echo "NEXTFLOW PIPELINE VERSION"
+    echo "****************************"
+    echo "params.release: ${params.release}"
+    echo "params.releasedate: ${params.releasedate}"
+    echo "params.githublink: ${params.githublink}"
+    echo "****************************"
+    echo ""
+
     workdir=\$(pwd)
 
     bcftools filter \

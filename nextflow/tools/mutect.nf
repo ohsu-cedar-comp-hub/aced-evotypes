@@ -21,6 +21,14 @@ process GetPileupSummaries {
 
     script:
     """
+    echo "NEXTFLOW PIPELINE VERSION"
+    echo "****************************"
+    echo "params.release: ${params.release}"
+    echo "params.releasedate: ${params.releasedate}"
+    echo "params.githublink: ${params.githublink}"
+    echo "****************************"
+    echo ""
+
     normal_basename=\$(basename ${normal_file} .bam)
     tumor_basename=\$(basename ${tumor_file} .bam)
 
@@ -68,6 +76,14 @@ process CalculateContamination {
 
     script:
     """
+    echo "NEXTFLOW PIPELINE VERSION"
+    echo "****************************"
+    echo "params.release: ${params.release}"
+    echo "params.releasedate: ${params.releasedate}"
+    echo "params.githublink: ${params.githublink}"
+    echo "****************************"
+    echo ""
+
     gatk CalculateContamination \
     --matched-normal ${normal_pileup} \
     --input ${tumor_pileup} \
@@ -105,6 +121,14 @@ process MUTECT2 {
 
     script:
     """
+    echo "NEXTFLOW PIPELINE VERSION"
+    echo "****************************"
+    echo "params.release: ${params.release}"
+    echo "params.releasedate: ${params.releasedate}"
+    echo "params.githublink: ${params.githublink}"
+    echo "****************************"
+    echo ""
+
     workdir=\$(pwd)
     echo "listing workdir: \${workdir}"
     ls \$workdir
@@ -150,6 +174,14 @@ process MERGE {
 
     script:
     """
+    echo "NEXTFLOW PIPELINE VERSION"
+    echo "****************************"
+    echo "params.release: ${params.release}"
+    echo "params.releasedate: ${params.releasedate}"
+    echo "params.githublink: ${params.githublink}"
+    echo "****************************"
+    echo ""
+
     gatk MergeVcfs \
     -I ${vcf_channel.join(' -I ')} \
     --OUTPUT ${tumor_SM}_${normal_SM}.mutect.vcf \
@@ -174,6 +206,14 @@ process MergeStats {
 
     script:
     """
+    echo "NEXTFLOW PIPELINE VERSION"
+    echo "****************************"
+    echo "params.release: ${params.release}"
+    echo "params.releasedate: ${params.releasedate}"
+    echo "params.githublink: ${params.githublink}"
+    echo "****************************"
+    echo ""
+
     gatk MergeMutectStats -stats ${stats.join(' -stats ')} --output ${tumor_SM}_${normal_SM}.mutect.vcf.stats
     """
 }
@@ -194,6 +234,14 @@ process LearnOrientation {
 
     script:
     """
+    echo "NEXTFLOW PIPELINE VERSION"
+    echo "****************************"
+    echo "params.release: ${params.release}"
+    echo "params.releasedate: ${params.releasedate}"
+    echo "params.githublink: ${params.githublink}"
+    echo "****************************"
+    echo ""
+
     gatk LearnReadOrientationModel -I ${f1r2file.join(' -I ')} --output ${tumor_SM}_${normal_SM}.mutect.vcf.f1r2.tar.gz
     """
     
@@ -221,6 +269,14 @@ process FilterMutect {
 
     script: 
     """
+    echo "NEXTFLOW PIPELINE VERSION"
+    echo "****************************"
+    echo "params.release: ${params.release}"
+    echo "params.releasedate: ${params.releasedate}"
+    echo "params.githublink: ${params.githublink}"
+    echo "****************************"
+    echo ""
+
     gatk FilterMutectCalls \
     --variant ${merged_vcf}  \
     --reference ${genome}/genome.fa \

@@ -23,6 +23,14 @@ process DellyCall {
 
     script:
     """
+    echo "NEXTFLOW PIPELINE VERSION"
+    echo "****************************"
+    echo "params.release: ${params.release}"
+    echo "params.releasedate: ${params.releasedate}"
+    echo "params.githublink: ${params.githublink}"
+    echo "****************************"
+    echo ""
+
     workdir=\$(pwd)
     mkdir -p \${workdir}/delly
     
@@ -58,6 +66,14 @@ process DellyTable {
 
     script:
     """
+    echo "NEXTFLOW PIPELINE VERSION"
+    echo "****************************"
+    echo "params.release: ${params.release}"
+    echo "params.releasedate: ${params.releasedate}"
+    echo "params.githublink: ${params.githublink}"
+    echo "****************************"
+    echo ""
+
     bcftools view ${bcf} | grep '^#CHROM' | awk -F '\\t' '{print \$10 "\\ttumor\\n" \$11 "\\tcontrol"}' > samples.txt 
     """
 } 
@@ -80,6 +96,14 @@ process DellyFilter {
 
     script:
     """
+    echo "NEXTFLOW PIPELINE VERSION"
+    echo "****************************"
+    echo "params.release: ${params.release}"
+    echo "params.releasedate: ${params.releasedate}"
+    echo "params.githublink: ${params.githublink}"
+    echo "****************************"
+    echo ""
+
     workdir=\$(pwd)
     mkdir -p \${workdir}/delly/filtered
     
@@ -111,6 +135,14 @@ process DellyQualityFilter {
 
     script:
     """
+    echo "NEXTFLOW PIPELINE VERSION"
+    echo "****************************"
+    echo "params.release: ${params.release}"
+    echo "params.releasedate: ${params.releasedate}"
+    echo "params.githublink: ${params.githublink}"
+    echo "****************************"
+    echo ""
+
     bcftools filter \
     -O v \
     -o dellyPASS_${tumor_SM}_${normal_SM}.vcf \
