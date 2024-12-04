@@ -92,7 +92,7 @@ with open(manifest, 'r') as file:
             data["file_2_basename"]=file_2_basename
             data["file_2_path"]=f's3://gdc-esca/{file_2_path}'
 
-            writing JSON to a file
+           # writing JSON to a file
             with open(f'{output_dir}/{case_id}.json', 'w') as out:
                 json.dump(data, out, indent=4)
             out.close()
