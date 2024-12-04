@@ -97,5 +97,4 @@ with open(manifest, 'r') as file:
                 json.dump(data, out, indent=4)
             out.close()
             print(f'JSON data has been stored in "{case_id}.json"')
-            samples = {}
 file.close()
