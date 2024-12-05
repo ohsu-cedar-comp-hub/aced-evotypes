@@ -47,7 +47,7 @@ process CGPWGS {
     cd \${workdir}/cgpwgs
 
     ds-cgpwgs.pl \
-    -c 30 \
+    -c 28 \
     -r \${workdir}/${core_zip} \
     -a \${workdir}/${vagrent_zip} \
     -si \${workdir}/${snv_zip} \
