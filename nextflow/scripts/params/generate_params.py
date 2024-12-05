@@ -27,7 +27,7 @@ client = Minio(
     secure=True
 )
 
-bucket="gdc-esca"
+bucket="gdcdata"
 # Function to find file location in the bucket
 def find_file_location(file_name):
     objects = client.list_objects(bucket, recursive=True)
@@ -87,10 +87,10 @@ with open(manifest, 'r') as file:
             data["case_id"]=case_id
             data["file_1"]=file_1
             data["file_1_basename"]=file_1_basename
-            data["file_1_path"]=f's3://gdc-esca/{file_1_path}'
+            data["file_1_path"]=f's3://gdcdata/{file_1_path}'
             data["file_2"]=file_2
             data["file_2_basename"]=file_2_basename
-            data["file_2_path"]=f's3://gdc-esca/{file_2_path}'
+            data["file_2_path"]=f's3://gdcdata/{file_2_path}'
 
            # writing JSON to a file
             with open(f'{output_dir}/{case_id}.json', 'w') as out:
