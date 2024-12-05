@@ -3,8 +3,8 @@
 #SBATCH -p batch
 #SBATCH --account=cedar
 #SBATCH -N 1
-#SBATCH -c 25
-#SBATCH --mem=120GB
+#SBATCH -c 26
+#SBATCH --mem=105GB
 #SBATCH --qos=long_jobs
 #SBATCH --time=10-0
 #SBATCH --output=/path/to/slurm/directory/%x.%j.out ## %j=job ID; %x=job name
@@ -35,13 +35,13 @@ echo nextflow logs output: $NFOUTPUT
 # make directory to hold input files
 mkdir -p $4/$5/files
 # copying normal files from bucket to scratch
-mc cp rgw/gdc-esca/$3/bam/$1 $4/$5/files
-mc cp rgw/gdc-esca/$3/bam/${1}.bai $4/$5/files
-mc cp rgw/gdc-esca/$3/bam/${1}.bas $4/$5/files
+mc cp rgw/gdcdata/$3/bam/$1 $4/$5/files
+mc cp rgw/gdcdata/$3/bam/${1}.bai $4/$5/files
+mc cp rgw/gdcdata/$3/bam/${1}.bas $4/$5/files
 # copying tumor files from bucket to scratch
-mc cp rgw/gdc-esca/$3/bam/$2 $4/$5/files
-mc cp rgw/gdc-esca/$3/bam/${2}.bai $4/$5/files
-mc cp rgw/gdc-esca/$3/bam/${2}.bas $4/$5/files
+mc cp rgw/gdcdata/$3/bam/$2 $4/$5/files
+mc cp rgw/gdcdata/$3/bam/${2}.bai $4/$5/files
+mc cp rgw/gdcdata/$3/bam/${2}.bas $4/$5/files
 
 # move to workdir
 workdir="$4/$5"
