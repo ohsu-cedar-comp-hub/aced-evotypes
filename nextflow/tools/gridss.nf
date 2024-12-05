@@ -52,6 +52,7 @@ process GRIDSS {
 process GridssSomaticFilter {
     errorStrategy 'ignore'
     container "${params.container_gridss_r}"
+    containerOptions "--home \$(pwd)"
     publishDir "${params.bucket}/${params.case_id}/gridss/filtered", mode:'copy'
 
     input:
@@ -62,20 +63,38 @@ process GridssSomaticFilter {
     val tumor_SM
 
     output:
-    path "${tumor_SM}_${normal_SM}.gridss.filtered.vcf"
-    path "${tumor_SM}_${normal_SM}.gridss.semifiltered.vcf"
+    path "${tumor_SM}_${normal_SM}.gridss.filtered.vcf*"
+    path "${tumor_SM}_${normal_SM}.gridss.semifiltered.vcf*"
 
     script:
     """
+    echo "NEXTFLOW PIPELINE VERSION"
+    echo "****************************"
+    echo "params.release: ${params.release}"
+    echo "params.releasedate: ${params.releasedate}"
+    echo "params.githublink: ${params.githublink}"
+    echo "****************************"
+
+    workdir=\$(pwd)
+    
+    echo "listing workdir: \${workdir}"
+    ls \$workdir
+    echo ""
+
     Rscript ${gridss_dir}/gridss_somatic_filter \
-    --input ${vcf} \
-    --pondir ${pondir} \
+    --input "\$workdir/${vcf}" \
+    --pondir "\$workdir/${pondir}" \
     --ref BSgenome.Hsapiens.UCSC.hg38 \
-    --output ${tumor_SM}_${normal_SM}.gridss.filtered.vcf \
-    --fulloutput ${tumor_SM}_${normal_SM}.gridss.semifiltered.vcf \
+    --output "\$workdir/${tumor_SM}_${normal_SM}.gridss.filtered.vcf" \
+    --fulloutput "\$workdir/${tumor_SM}_${normal_SM}.gridss.semifiltered.vcf" \
     --normalordinal 1 \
     --tumourordinal 2 \
-    -s ${gridss_dir} \
+    -s "\$workdir/${gridss_dir}" \
     --gc
+
+    echo ""
+    echo "listing workdir after script completion: \${workdir}"
+    ls \$workdir
+    echo ""
     """
 }
