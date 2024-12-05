@@ -17,7 +17,6 @@ option_list = list(
   make_option(c("--nb"), type="character", default=NULL, help="Normal BAM file", metavar="character"),
   make_option(c("--cpu"), type="numeric", default=8, help="The number of CPU cores to be used by the pipeline (Default: 16)", metavar="character"),
   make_option(c("-o", "--output"), type="character", default=NULL, help="Directory where output will be written", metavar="character"),
-  # make_option(c("-w", "--workdir"), type="character", default=NULL, help="Working directory path", metavar="character"),
   make_option(c("-p", "--allelesprefix"), type="character", default=NULL, help="g1000allelesprefix", metavar="character")
   )
 
