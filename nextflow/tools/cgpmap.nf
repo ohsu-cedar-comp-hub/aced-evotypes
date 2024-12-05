@@ -40,7 +40,7 @@ process CGPMAP {
     -i ${bwa_zip} \
     -s \${SM} \
     -o \${workdir} \
-    -t 16 \
+    -t 8 \
     -bwakit \
     -bm2 \
     ${cram}

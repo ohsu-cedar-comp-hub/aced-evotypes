@@ -3,7 +3,7 @@
 #SBATCH -p batch
 #SBATCH --account=cedar
 #SBATCH -N 1
-#SBATCH -c 32
+#SBATCH -c 16
 #SBATCH --mem=160GB
 #SBATCH --qos=long_jobs
 #SBATCH --time=5-0
