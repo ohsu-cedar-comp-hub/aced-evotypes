@@ -59,7 +59,8 @@ process MantaRunWorkflow {
     path core_ref
 
     output:
-    path "manta/*"
+    path "manta/*.txt"
+    path "manta/results/*"
     path "${manta}/results/variants/somaticSV.vcf.gz", emit: somaticSV
 
     script:

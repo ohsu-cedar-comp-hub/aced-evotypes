@@ -60,7 +60,8 @@ process StrelkaRunWorkflow {
     path core_ref
 
     output:
-    path "strelka/*"
+    path "strelka/*.txt"
+    path "strelka/results/*"
     path "${strelka}/results/variants/somatic.indels.vcf.gz", emit: somatic_indels
     path "${strelka}/results/variants/somatic.snvs.vcf.gz", emit: somatic_snvs
 
