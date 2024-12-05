@@ -37,8 +37,6 @@ print("cpu:")
 print(opt$cpu)
 print("o:")
 print(opt$output)
-# print("w:")
-# print(opt$workdir)
 print("p:")
 print(opt$allelesprefix)
 
@@ -47,7 +45,6 @@ normalname = opt$normalname
 normalbam = opt$nb
 tumourbam = opt$tb
 RUN_DIR = opt$output
-# workdir = opt$workdir
 g1000allelesprefix = opt$allelesprefix
 
 print("")
