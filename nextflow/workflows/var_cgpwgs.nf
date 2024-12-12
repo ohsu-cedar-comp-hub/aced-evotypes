@@ -1,9 +1,9 @@
 #!/usr/bin/env nextflow
 
 // Nextflow Pipeline Version
-params.release= "v0.1.1"
-params.releasedate = "12-05-2024"
-params.githublink = "https://github.com/ohsu-cedar-comp-hub/aced-evotypes/tree/v0.1.1/nextflow"
+params.release= "v0.1.2"
+params.releasedate = "12-12-2024"
+params.githublink = "https://github.com/ohsu-cedar-comp-hub/aced-evotypes/tree/v0.1.2/nextflow"
 
 // import modules
 include { SampleID } from '../tools/sample_id.nf'

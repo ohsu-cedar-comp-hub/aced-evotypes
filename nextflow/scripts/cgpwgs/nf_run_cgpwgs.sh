@@ -4,7 +4,7 @@
 #SBATCH --account=cedar
 #SBATCH -N 1
 #SBATCH -c 28
-#SBATCH --mem=115GB
+#SBATCH --mem=112GB
 #SBATCH --qos=long_jobs
 #SBATCH --time=10-0
 #SBATCH --output=/path/to/slurm/directory/%x.%j.out ## %j=job ID; %x=job name

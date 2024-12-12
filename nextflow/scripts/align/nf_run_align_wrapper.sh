@@ -5,7 +5,7 @@
 #SBATCH -N 1
 #SBATCH -c 1
 #SBATCH --mem=1GB
-#SBATCH --time=1:00:00
+#SBATCH --time=2:00:00
 
 json_dir="/path/to/directory/with/json/files"
 script="/path/to/<nf_run_align.sh>"

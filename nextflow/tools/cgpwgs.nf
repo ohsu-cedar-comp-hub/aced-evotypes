@@ -3,7 +3,7 @@
 process CGPWGS {
     container "${params.container_cgpwgs}"
     containerOptions "--home \$(pwd)/cgpwgs"
-    publishDir "${params.bucket}/${params.case_id}/cgpwgs", mode:'copy'
+    publishDir "${params.bucket}/${params.case_id}", mode:'copy'
 
     input: 
     path files

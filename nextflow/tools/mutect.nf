@@ -96,7 +96,7 @@ process CalculateContamination {
 // This runs mutect on a region. The format of the 'region' variable is "chr1:1234567-2345678". Uses interval list of 793 regions
 process MUTECT2 {
     errorStrategy 'ignore'
-    maxForks 20 //set this when running on local scratch to parallelize; up to the max number of cpus available minus 1
+    maxForks 10 //set this when running on local scratch to parallelize; up to the max number of cpus available minus 1
     cpus 1 // set cpu to 1; gatk discourages multithreading
     container "${params.container_gatk}"
 

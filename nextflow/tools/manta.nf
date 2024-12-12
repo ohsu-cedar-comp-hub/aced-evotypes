@@ -73,7 +73,7 @@ process MantaRunWorkflow {
     echo "****************************"
     echo ""
 
-    ${manta}/runWorkflow.py -j 8
+    ${manta}/runWorkflow.py -j 4
     """
 }
 

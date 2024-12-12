@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#SBATCH --job-name=gen_var_params
+#SBATCH --job-name=gen_params
 #SBATCH -p batch
 #SBATCH --account=cedar
 #SBATCH -N 1
@@ -10,7 +10,6 @@
 
 # Activate python env that contains required packages
 conda activate python_3.12.4
-
 
 script="/path/to/script/directory"
 manifest="/path/to/sample/list"

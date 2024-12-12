@@ -3,10 +3,10 @@
 #SBATCH -p batch
 #SBATCH --account=cedar
 #SBATCH -N 1
-#SBATCH -c 26
-#SBATCH --mem=105GB
+#SBATCH -c 23
+#SBATCH --mem=276GB
 #SBATCH --qos=long_jobs
-#SBATCH --time=10-0
+#SBATCH --time=5-0
 #SBATCH --output=/path/to/slurm/directory/%x.%j.out ## %j=job ID; %x=job name
 
 # variables passed from wrapper script
