@@ -11,6 +11,8 @@ process AlleleCounter {
     path g1000alleles
     val normal_SM
     val tumor_SM
+    val normal_file
+    val tumor_file
 
     output:
     path "allele_counting/*"
@@ -39,8 +41,8 @@ process AlleleCounter {
     Rscript ${bin}/runAC_forBattenberg.R \
     -t ${tumor_SM} \
     -n ${normal_SM} \
-    --nb "\${workdir}/${files}/${normal_SM}.bam" \
-    --tb "\${workdir}/${files}/${tumor_SM}.bam" \
+    --nb "\${workdir}/${files}/${normal_file}" \
+    --tb "\${workdir}/${files}/${tumor_file}" \
     --cpu 4 \
     -o "\${workdir}/allele_counting" \
     -p "\${workdir}/${g1000alleles}/1kg.phase3.v5a_GRCh38nounref_loci_chrstring_chr"
