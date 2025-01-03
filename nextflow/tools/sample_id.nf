@@ -34,8 +34,8 @@ process SampleID {
     rg_2=\$(samtools view -H ${files}/${params.file_2} | grep '^@RG' | head -1)
 
     # get tumor normal designation for each file (bam)
-    type_1=\$(samtools view -H ${files}/${params.file_1} | grep '^@RG' | head -1 | sed 's/.*DS:\\(.*\\)/\\1/' | awk -F'|' '{print \$NF}')
-    type_2=\$(samtools view -H ${files}/${params.file_2} | grep '^@RG' | head -1 | sed 's/.*DS:\\(.*\\)/\\1/' | awk -F'|' '{print \$NF}')
+    type_1=\$(samtools view -H ${files}/${params.file_1} | grep '^@RG' | head -1 | grep -oP 'DS:\\K[^\\t]+' | awk -F'|' '{print \$NF}')
+    type_2=\$(samtools view -H ${files}/${params.file_2} | grep '^@RG' | head -1 | grep -oP 'DS:\\K[^\\t]+' | awk -F'|' '{print \$NF}')
 
     echo "rg_1: \${rg_1}"
     echo "type_1: \${type_1}"
