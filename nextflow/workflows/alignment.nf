@@ -1,9 +1,9 @@
 #!/usr/bin/env nextflow
 
 // Nextflow Pipeline Version
-params.release= "v0.1.2"
-params.releasedate = "12-12-2024"
-params.githublink = "https://github.com/ohsu-cedar-comp-hub/aced-evotypes/tree/v0.1.2/nextflow"
+params.release= "v0.1.4"
+params.releasedate = "01-02-2025"
+params.githublink = "https://github.com/ohsu-cedar-comp-hub/aced-evotypes/tree/v0.1.4/nextflow"
 
 // import modules
 include { CGPMAP } from '../tools/cgpmap.nf'
